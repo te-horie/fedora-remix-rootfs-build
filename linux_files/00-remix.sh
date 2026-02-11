@@ -128,13 +128,9 @@ setup_display() {
     fi
 
     # enable external x display for WSL 2
-    route_exec=$(wslpath 'C:\Windows\system32\route.exe')
+    route_print_exec="cmd.exe /d /c \"chcp 65001>nul & route print\""
 
-    if route_exec_path=$(command -v route.exe 2>/dev/null); then
-      route_exec="${route_exec_path}"
-    fi
-
-    wsl2_d_tmp="$(eval "$route_exec print 2> /dev/null" | grep 0.0.0.0 | head -1 | awk '{print $4}')"
+    wsl2_d_tmp="$(eval "$route_print_exec 2> /dev/null" | grep 0.0.0.0 | head -1 | awk '{print $4}')"
 
     if [ -n "${wsl2_d_tmp}" ]; then
       export DISPLAY="${wsl2_d_tmp}":0
@@ -144,7 +140,7 @@ setup_display() {
     fi
 
     unset wsl2_d_tmp
-    unset route_exec
+    unset route_print_exec
   else
     # enable external x display for WSL 1
     export DISPLAY=localhost:0
